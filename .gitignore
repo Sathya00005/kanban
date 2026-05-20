@@ -1,0 +1,84 @@
+# =========================
+# NODE / FRONTEND
+# =========================
+node_modules/
+dist/
+build/
+.vite/
+.cache/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env
+.env
+.env.local
+.env.development.local
+.env.production.local
+
+# =========================
+# PYTHON / BACKEND
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Python cache
+.pytest_cache/
+.mypy_cache/
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# OS FILES
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# MONGO
+# =========================
+dump/
+
+# =========================
+# COVERAGE
+# =========================
+coverage/
+htmlcov/
+
+# =========================
+# TEMP
+# =========================
+*.tmp
+*.temp
+
+# =========================
+# LOGS
+# =========================
+logs/
+*.log
+
+# =========================
+# FRONTEND ENV
+# =========================
+frontend/.env
+
+# =========================
+# BACKEND ENV
+# =========================
+backend/.env
