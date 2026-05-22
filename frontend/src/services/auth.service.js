@@ -1,13 +1,33 @@
-import api from '../api/axios'
+import axios from 'axios';
 
-export const signup = async (payload) => {
-  console.log('SIGNUP PAYLOAD:', payload)
-  return api.post('/auth/signup', payload)
-}
+const BASE_URL = "http://127.0.0.1:8002/auth";
 
-export const login = async (payload) => {
-  console.log('LOGIN PAYLOAD:', payload)
-  return api.post('/auth/login', payload)
-}
+// 🚀 SECURE LOGIN ENGINE
+export const login = async (credentials) => {
+  const emailValue = credentials.email || credentials.username;
+  
+  // 🛡️ FIXED: Changed .lower() to JavaScript's standard .toLowerCase()
+  const optimizedPayload = {
+    email: emailValue?.trim().toLowerCase(),
+    username: emailValue?.trim().toLowerCase(), 
+    password: credentials.password
+  };
 
-export const me = () => api.get('/auth/me')
+  console.log("📡 DISPATCHING SECURED LOGIN PAYLOAD:", optimizedPayload);
+  return await axios.post(`${BASE_URL}/login`, optimizedPayload);
+};
+
+// 🌟 RESTORED SIGNUP ENGINE
+export const signup = async (userData) => {
+  const emailValue = userData.email || userData.username;
+
+  // 🛡️ FIXED: Changed .lower() to JavaScript's standard .toLowerCase()
+  const optimizedPayload = {
+    email: emailValue?.trim().toLowerCase(),
+    username: emailValue?.trim().toLowerCase(),
+    password: userData.password
+  };
+
+  console.log("📡 DISPATCHING SIGNUP PAYLOAD:", optimizedPayload);
+  return await axios.post(`${BASE_URL}/signup`, optimizedPayload);
+};

@@ -7,7 +7,8 @@ import { useAuthStore } from './store/auth.store'
 
 function RequireAuth({ children }){
   const token = useAuthStore(s => s.token)
-  if(!token) return <Navigate to="/login" />
+  const persistedToken = token || localStorage.getItem('kanban_token')
+  if(!persistedToken) return <Navigate to="/login" />
   return children
 }
 
