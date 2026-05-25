@@ -4,7 +4,6 @@ from bson import ObjectId
 from typing import List, Optional
 
 from ..db.mongodb import db
-# 🚀 SIGNATURE IMPORT: Resolves the ImportError mismatch cleanly
 from ..utils.security import get_current_user
 
 router = APIRouter(
@@ -16,6 +15,7 @@ class TaskCreate(BaseModel):
     title: str
     description: str = ""
     status: str = "backlog"
+    priority: str = "medium"
     owner_email: Optional[str] = None 
 
 class UpdateTask(BaseModel):
@@ -29,7 +29,6 @@ async def get_tasks(current_user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=401, detail="Invalid token identity fingerprint.")
         
     tasks = []
-    # MongoDB isolates queries exclusively to this user's email signature
     query = {"owner_email": user_email}
     
     async for task in db.tasks.find(query):
@@ -46,13 +45,11 @@ async def create_task(task: TaskCreate, current_user: dict = Depends(get_current
         raise HTTPException(status_code=401, detail="User tracking identifier missing from token context.")
     
     data = task.dict()
-    # Force the owner field on the server side using the secure token data payload
     data["owner_email"] = user_email
 
     result = await db.tasks.insert_one(data)
     data["_id"] = str(result.inserted_id)
 
-    # Log action to timeline collection
     try:
         await db.activity_history.insert_one({
             "owner_email": user_email,
@@ -64,7 +61,7 @@ async def create_task(task: TaskCreate, current_user: dict = Depends(get_current
 
     return data
 
-# 🔒 3. STATE MUTATION CROSS-USER DRAG INTEGRITY GUARD
+# 🔒 3. STATE MUTATION GUARD
 @router.patch("/{task_id}")
 async def update_task(task_id: str, data: UpdateTask, current_user: dict = Depends(get_current_user)):
     user_email = current_user.get("email")
@@ -76,7 +73,6 @@ async def update_task(task_id: str, data: UpdateTask, current_user: dict = Depen
     if not existing_task:
         raise HTTPException(status_code=404, detail="Task board card asset entry not found.")
 
-    # 🛑 CROSS-USER SECURITY GUARD: Reject action if user does not own this card layout
     if existing_task.get("owner_email") != user_email:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
